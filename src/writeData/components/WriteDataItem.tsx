@@ -5,13 +5,12 @@ import {useHistory} from 'react-router-dom'
 
 // Components
 import {SelectableCard, SquareGrid, ComponentSize} from '@influxdata/clockface'
-const LazySVG = React.lazy(() => import('src/perf/components/LazySVG'))
 
 // Utils
 import {getOrg} from 'src/organizations/selectors'
 
 // Graphics
-import placeholderLogo from 'src/writeData/graphics/placeholderLogo.svg'
+import PlaceholderLogo from 'src/writeData/graphics/placeholderLogo'
 
 // Constants
 import {ORGS} from 'src/shared/constants/routes'
@@ -47,13 +46,21 @@ const WriteDataItem: FC<Props> = ({
     history.push(`/${ORGS}/${org.id}/load-data/${url}`)
   }
 
-  let thumb = <img src={placeholderLogo} />
   const svgStyle = style ? style : ({} as CSSProperties)
 
+  let thumb = (
+    <Suspense fallback="Loading...">
+      <PlaceholderLogo />
+    </Suspense>
+  )
+
   if (image) {
+    const LazySVG = React.lazy(() => import(`src/writeData/graphics/${image}`))
+    console.log('svgStyle:', svgStyle)
+    console.log('~~ writeDataItem: image:', image, 'name:', name)
     thumb = (
-      <Suspense fallback="Loading...">
-        <LazySVG image={image} style={svgStyle} alt={name} />
+      <Suspense fallback="Loading">
+        <LazySVG style={svgStyle} />
       </Suspense>
     )
   }

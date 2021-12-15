@@ -1,4 +1,5 @@
 import {CSSProperties} from 'react'
+
 export interface TelegrafPluginAssets {
   id: string
   name: string
