@@ -56,8 +56,6 @@ const WriteDataItem: FC<Props> = ({
 
   if (image) {
     const LazySVG = React.lazy(() => import(`src/writeData/graphics/${image}`))
-    console.log('svgStyle:', svgStyle)
-    console.log('~~ writeDataItem: image:', image, 'name:', name)
     thumb = (
       <Suspense fallback="Loading">
         <LazySVG style={svgStyle} />
