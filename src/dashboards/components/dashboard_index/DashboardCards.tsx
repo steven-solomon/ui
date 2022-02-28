@@ -1,5 +1,5 @@
 // Libraries
-import React, {FC, useState, useEffect, useMemo} from 'react'
+import React, {FC, useState, useEffect, useCallback} from 'react'
 import {connect} from 'react-redux'
 
 // Components
@@ -52,6 +52,13 @@ const DashboardCards: FC<OwnProps & StateProps> = ({
   let _observer: IntersectionObserver
   let _isMounted: boolean = true
   let _spinner: Element
+
+  const memGetSortedResources = useCallback(getSortedResources, [
+    dashboards,
+    sortKey,
+    sortDirection,
+    sortType,
+  ])
 
   useEffect(() => {
     if (isFlagEnabled('pinnedItems') && CLOUD) {
@@ -108,9 +115,11 @@ const DashboardCards: FC<OwnProps & StateProps> = ({
     }
   }
 
-  const sortedDashboards = useMemo(
-    () => getSortedResources(dashboards, sortKey, sortDirection, sortType),
-    [dashboards, sortKey, sortDirection, sortType]
+  const sortedDashboards = memGetSortedResources(
+    dashboards,
+    sortKey,
+    sortDirection,
+    sortType
   )
 
   return (
