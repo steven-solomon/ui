@@ -157,4 +157,4 @@ const mstp = (state: AppState) => {
   }
 }
 
-export default connect(mstp)(DashboardCards)
+export default connect(mstp)(React.memo(DashboardCards))
