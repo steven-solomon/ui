@@ -137,7 +137,7 @@ jobs:
 
   monitor-ci-tests:
     docker:
-      - image: quay.io/influxdb/ui-pipeline:7efcac6587c8bc8097560ee34464d9f5f0aab46f
+      - image: quay.io/influxdb/ui-pipeline:97c7866d61a6a2041b05efb139959d037b221d1d
         auth:
           username: $QUAY_CD_USER
           password: $QUAY_CD_PASSWORD
