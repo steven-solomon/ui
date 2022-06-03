@@ -76,8 +76,12 @@ export enum Methods {
   ExecuteCommand = 'workspace/executeCommand',
 }
 
+// TODO: import from LSP?
 export enum ExecuteCommand {
   InjectFunction = 'injectFunction',
+  InjectionMeasurement = 'injectMeasurement',
+  InjectTag = 'injectTag',
+  InjectTagValue = 'injectTagValue',
 }
 
 export type LspInjectPayload = Fluxdocs

@@ -35,6 +35,7 @@ export interface EditorContextType {
   inject: (options: InjectionOptions) => void
   injectFunction: (fn, cbToParent) => void
   injectVariable: (variableName, cbToParent) => void
+  injectViaLsp: (cmd: ExecuteCommand, data: LspInjectPayload) => void
 }
 
 const DEFAULT_CONTEXT: EditorContextType = {
@@ -43,6 +44,7 @@ const DEFAULT_CONTEXT: EditorContextType = {
   inject: _ => {},
   injectFunction: (_, __) => {},
   injectVariable: (_, __) => {},
+  injectViaLsp: (_, __) => {},
 }
 
 export const EditorContext = createContext<EditorContextType>(DEFAULT_CONTEXT)
@@ -60,6 +62,10 @@ export const EditorProvider: FC = ({children}) => {
 
   const injectViaLsp = useCallback(
     (cmd, data: LspInjectPayload) => {
+      if (!isFlagEnabled('injectionViaLsp')) {
+        throw new Error('Calling Lsp injection method, without flag enablement')
+      }
+
       connection.current.inject(cmd, data, editor.getPosition())
     },
     [editor, connection]
@@ -193,6 +199,7 @@ export const EditorProvider: FC = ({children}) => {
         inject,
         injectFunction,
         injectVariable,
+        injectViaLsp,
       }}
     >
       {children}
