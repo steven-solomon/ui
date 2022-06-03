@@ -13,7 +13,7 @@ import {
   BrowserMessageWriter,
   createMessageConnection,
 } from 'vscode-jsonrpc/browser'
-import Prelude from 'src/languageSupport/languages/flux/lsp/prelude'
+import ConnectionManager from 'src/languageSupport/languages/flux/lsp/connection'
 
 // flux language support
 import FLUXLANGID from 'src/languageSupport/languages/flux/monaco.flux.syntax'
@@ -50,7 +50,7 @@ function createLanguageClient(
   })
 }
 
-let worker: Worker, messageReader, messageWriter, prelude
+let worker: Worker, messageReader, messageWriter, manager
 
 export function initLspWorker() {
   if (worker) {
@@ -61,7 +61,7 @@ export function initLspWorker() {
   } else {
     worker = new Fallback()
   }
-  prelude = new Prelude(worker)
+  manager = new ConnectionManager(worker)
 
   messageReader = new BrowserMessageReader(worker)
   messageWriter = new BrowserMessageWriter(worker)
@@ -70,12 +70,12 @@ export function initLspWorker() {
   const disposable = languageClient.start()
   connection.onClose(() => {
     disposable.dispose()
-    prelude.dispose()
+    manager.dispose()
   })
 }
 initLspWorker()
 
 export function setupForReactMonacoEditor(editor: EditorType) {
-  prelude.subscribeToModel(editor)
-  return prelude
+  manager.subscribeToModel(editor)
+  return manager
 }

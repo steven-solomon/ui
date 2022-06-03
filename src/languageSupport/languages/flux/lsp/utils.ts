@@ -2,6 +2,8 @@ import {
   ProtocolRequestType,
   ProtocolNotificationType,
 } from 'vscode-languageserver-protocol'
+import * as MonacoTypes from 'monaco-editor/esm/vs/editor/editor.api'
+import {Fluxdocs} from 'src/client/fluxdocsdRoutes'
 
 export const makeRequestType = (method: string) => {
   return new ProtocolRequestType<any, any, any, any, any>(method)
@@ -43,6 +45,19 @@ export const didOpen = (uri: string, text: string, version: number) => {
   })
 }
 
+export const executeCommand = (
+  command: ExecuteCommand,
+  arg: {data: LspInjectPayload; position: MonacoTypes.Position}
+) => {
+  return createNotification(Methods.ExecuteCommand, {
+    command,
+    arguments: [arg],
+    workDoneProgressParams: {
+      workDoneToken: null,
+    },
+  })
+}
+
 export enum Methods {
   Initialize = 'initialize',
   Initialized = 'initialized',
@@ -58,4 +73,11 @@ export enum Methods {
   Hover = 'textDocument/hover',
   References = 'textDocument/references',
   Rename = 'textDocument/rename',
+  ExecuteCommand = 'workspace/executeCommand',
 }
+
+export enum ExecuteCommand {
+  InjectFunction = 'injectFunction',
+}
+
+export type LspInjectPayload = Fluxdocs

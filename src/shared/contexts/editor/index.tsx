@@ -15,13 +15,23 @@ import {
 } from 'src/shared/utils/fluxFunctions'
 import {getFluxExample} from 'src/shared/utils/fluxExample'
 
+// LSP
+import {
+  ExecuteCommand,
+  LspInjectPayload,
+} from 'src/languageSupport/languages/flux/lsp/utils'
+import LspConnectionManager from 'src/languageSupport/languages/flux/lsp/connection'
+
 // Utils
 import {isFlagEnabled} from 'src/shared/utils/featureFlag'
 import {CLOUD} from 'src/shared/constants'
 
 export interface EditorContextType {
   editor: EditorType | null
-  setEditor: (editor: EditorType) => void
+  setEditor: (
+    editor: EditorType,
+    conn: React.MutableRefObject<LspConnectionManager>
+  ) => void
   inject: (options: InjectionOptions) => void
   injectFunction: (fn, cbToParent) => void
   injectVariable: (variableName, cbToParent) => void
@@ -38,7 +48,22 @@ const DEFAULT_CONTEXT: EditorContextType = {
 export const EditorContext = createContext<EditorContextType>(DEFAULT_CONTEXT)
 
 export const EditorProvider: FC = ({children}) => {
-  const [editor, setEditor] = useState<EditorType>(null)
+  const [editor, setEditorOnState] = useState<EditorType>(null)
+  const [connection, setConnection] = useState<
+    React.MutableRefObject<LspConnectionManager>
+  >(null)
+
+  const setEditor = (ed, conn) => {
+    setEditorOnState(ed)
+    setConnection(conn)
+  }
+
+  const injectViaLsp = useCallback(
+    (cmd, data: LspInjectPayload) => {
+      connection.current.inject(cmd, data, editor.getPosition())
+    },
+    [editor, connection]
+  )
 
   const inject = useCallback(
     (options: InjectionOptions) => {
@@ -115,6 +140,10 @@ export const EditorProvider: FC = ({children}) => {
         CLOUD && isFlagEnabled('fluxDynamicDocs')
           ? getFluxExample(rawFn as FluxFunction)
           : (rawFn as FluxFunction)
+
+      if (isFlagEnabled('injectionViaLsp')) {
+        return injectViaLsp(ExecuteCommand.InjectFunction, fn)
+      }
 
       const text = isPipeTransformation(fn)
         ? `  |> ${fn.example.trimRight()}`

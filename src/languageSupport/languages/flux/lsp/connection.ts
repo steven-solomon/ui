@@ -6,9 +6,15 @@ import {EditorType, Variable} from 'src/types'
 import {buildUsedVarsOption} from 'src/variables/utils/buildVarsOption'
 
 // LSP methods
-import {didOpen, didChange} from 'src/languageSupport/languages/flux/lsp/utils'
+import {
+  didOpen,
+  didChange,
+  executeCommand,
+  LspInjectPayload,
+  ExecuteCommand,
+} from 'src/languageSupport/languages/flux/lsp/utils'
 
-class Prelude {
+class LspConnectionManager {
   private _worker: Worker
   private _model: MonacoTypes.editor.IModel
   private _preludeModel: MonacoTypes.editor.IModel
@@ -58,9 +64,17 @@ class Prelude {
     )
   }
 
+  inject(
+    command: ExecuteCommand,
+    data: LspInjectPayload,
+    position: MonacoTypes.Position
+  ) {
+    this._worker.postMessage(executeCommand(command, {data, position}))
+  }
+
   dispose() {
     this._model.onDidChangeContent(null)
   }
 }
 
-export default Prelude
+export default LspConnectionManager
