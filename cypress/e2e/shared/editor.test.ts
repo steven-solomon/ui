@@ -54,7 +54,6 @@ describe('Editor+LSP communication', () => {
 
   describe('in Flows:', () => {
     before(() => {
-      cy.flush()
       cy.signin()
       cy.get('@org').then(({id}: Organization) =>
         cy.fixture('routes').then(({orgs}) => {
@@ -88,7 +87,6 @@ describe('Editor+LSP communication', () => {
 
   describe('in DataExplorer', () => {
     before(() => {
-      cy.flush()
       cy.signin()
       cy.get('@org').then(({id}: Organization) => {
         cy.createMapVariable(id)
@@ -110,11 +108,10 @@ describe('Editor+LSP communication', () => {
 
   describe('in QX FluxBuilder', () => {
     before(() => {
-      cy.flush()
-      cy.signin()
       cy.setFeatureFlags({
         newDataExplorer: true,
       })
+      cy.signin()
       cy.get('@org').then(({id}: Organization) => {
         cy.createMapVariable(id)
         cy.fixture('routes').then(({orgs, explorer}) => {
@@ -126,7 +123,7 @@ describe('Editor+LSP communication', () => {
       cy.getByTestID('toggle-new-data-explorer')
         .should('be.visible')
         .click()
-      cy.getByTestID('flux-editor').should('be.visible')
+      cy.getByTestID('flux-editor', {timeout: 30000}).should('be.visible')
     })
 
     runTest('flux-editor')
