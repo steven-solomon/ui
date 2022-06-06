@@ -77,8 +77,11 @@ export enum Methods {
 }
 
 // TODO: import from LSP?
+// TODO: will we have fields and tags as separate inject commands?
 export enum ExecuteCommand {
   InjectFunction = 'injectFunction',
+  InjectionBucket = 'injectBucket',
+  InjectCsvSample = 'injectCsvSample',
   InjectionMeasurement = 'injectMeasurement',
   InjectTag = 'injectTag',
   InjectTagValue = 'injectTagValue',
