@@ -120,7 +120,7 @@ describe('Editor+LSP communication', () => {
         })
       })
 
-      cy.getByTestID('toggle-new-data-explorer')
+      cy.getByTestID('flux-query-builder-toggle')
         .should('be.visible')
         .click()
       cy.getByTestID('flux-editor', {timeout: 30000}).should('be.visible')

@@ -78,7 +78,6 @@ const DataExplorerPage: FC = () => {
                 <InputLabel>&#10024; Try new Data Explorer</InputLabel>
                 <SlideToggle
                   active={fluxQueryBuilder}
-                  testID="toggle-new-data-explorer"
                   onChange={() => {
                     setFluxQueryBuilder(!fluxQueryBuilder)
                   }}
