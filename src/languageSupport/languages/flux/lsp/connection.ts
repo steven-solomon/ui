@@ -10,7 +10,7 @@ import {
   didOpen,
   didChange,
   executeCommand,
-  LspInjectPayload,
+  ExecuteCommandArgument,
   ExecuteCommand,
 } from 'src/languageSupport/languages/flux/lsp/utils'
 
@@ -66,10 +66,15 @@ class LspConnectionManager {
 
   inject(
     command: ExecuteCommand,
-    data: LspInjectPayload,
+    data: Omit<ExecuteCommandArgument, 'textDocument'>,
     position: MonacoTypes.Position
   ) {
-    this._worker.postMessage(executeCommand(command, {data, position}))
+    this._worker.postMessage(
+      executeCommand(command, {
+        ...data,
+        textDocument: {uri: this._model.uri.toString(), position},
+      } as ExecuteCommandArgument)
+    )
   }
 
   dispose() {

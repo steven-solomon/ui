@@ -3,7 +3,7 @@ import {
   ProtocolNotificationType,
 } from 'vscode-languageserver-protocol'
 import * as MonacoTypes from 'monaco-editor/esm/vs/editor/editor.api'
-import {Fluxdocs} from 'src/client/fluxdocsdRoutes'
+import {FluxDocs} from 'src/types'
 
 export const makeRequestType = (method: string) => {
   return new ProtocolRequestType<any, any, any, any, any>(method)
@@ -45,9 +45,38 @@ export const didOpen = (uri: string, text: string, version: number) => {
   })
 }
 
+interface ExecuteCommandParams {
+  textDocument: {
+    uri: string
+    position: MonacoTypes.Position
+  }
+}
+
+export interface ExecuteCommandInjectTag extends ExecuteCommandParams {
+  name: string
+  bucket?: string
+}
+
+export interface ExecuteCommandInjectTagValue extends ExecuteCommandInjectTag {
+  value: string
+}
+
+export type ExecuteCommandInjectField = ExecuteCommandInjectTag
+
+// TODO: LSP contract is not yet decided to this one.
+export interface ExecuteCommandInjectFunction extends ExecuteCommandParams {
+  data: FluxDocs
+}
+
+export type ExecuteCommandArgument =
+  | ExecuteCommandInjectTag
+  | ExecuteCommandInjectTagValue
+  | ExecuteCommandInjectField
+  | ExecuteCommandInjectFunction
+
 export const executeCommand = (
   command: ExecuteCommand,
-  arg: {data: LspInjectPayload; position: MonacoTypes.Position}
+  arg: ExecuteCommandArgument
 ) => {
   return createNotification(Methods.ExecuteCommand, {
     command,
@@ -77,14 +106,12 @@ export enum Methods {
 }
 
 // TODO: import from LSP?
-// TODO: will we have fields and tags as separate inject commands?
 export enum ExecuteCommand {
   InjectFunction = 'injectFunction',
-  InjectionBucket = 'injectBucket',
-  InjectCsvSample = 'injectCsvSample',
-  InjectionMeasurement = 'injectMeasurement',
-  InjectTag = 'injectTag',
-  InjectTagValue = 'injectTagValue',
+  // InjectionBucket = 'injectBucket',
+  // InjectCsvSample = 'injectCsvSample',
+  // InjectionMeasurement = 'injectMeasurement',
+  InjectField = 'injectFieldFilter',
+  InjectTag = 'injectTagFilter',
+  InjectTagValue = 'injectTagValueFilter',
 }
-
-export type LspInjectPayload = Fluxdocs

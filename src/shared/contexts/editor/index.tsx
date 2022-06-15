@@ -18,7 +18,7 @@ import {getFluxExample} from 'src/shared/utils/fluxExample'
 // LSP
 import {
   ExecuteCommand,
-  LspInjectPayload,
+  ExecuteCommandArgument,
 } from 'src/languageSupport/languages/flux/lsp/utils'
 import LspConnectionManager from 'src/languageSupport/languages/flux/lsp/connection'
 
@@ -35,7 +35,10 @@ export interface EditorContextType {
   inject: (options: InjectionOptions) => void
   injectFunction: (fn, cbToParent) => void
   injectVariable: (variableName, cbToParent) => void
-  injectViaLsp: (cmd: ExecuteCommand, data: LspInjectPayload) => void
+  injectViaLsp: (
+    cmd: ExecuteCommand,
+    data: Omit<ExecuteCommandArgument, 'textDocument'>
+  ) => void
 }
 
 const DEFAULT_CONTEXT: EditorContextType = {
@@ -61,7 +64,7 @@ export const EditorProvider: FC = ({children}) => {
   }
 
   const injectViaLsp = useCallback(
-    (cmd, data: LspInjectPayload) => {
+    (cmd, data: Omit<ExecuteCommandArgument, 'textDocument'>) => {
       if (!isFlagEnabled('injectionViaLsp')) {
         throw new Error('Calling Lsp injection method, without flag enablement')
       }
@@ -148,7 +151,7 @@ export const EditorProvider: FC = ({children}) => {
           : (rawFn as FluxFunction)
 
       if (isFlagEnabled('injectionViaLsp')) {
-        return injectViaLsp(ExecuteCommand.InjectFunction, fn)
+        return injectViaLsp(ExecuteCommand.InjectFunction, {data: fn})
       }
 
       const text = isPipeTransformation(fn)
