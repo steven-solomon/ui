@@ -54,6 +54,7 @@ describe('Editor+LSP communication', () => {
 
   describe('in Flows:', () => {
     before(() => {
+      cy.flush()
       cy.signin()
       cy.get('@org').then(({id}: Organization) =>
         cy.fixture('routes').then(({orgs}) => {
@@ -87,6 +88,7 @@ describe('Editor+LSP communication', () => {
 
   describe('in DataExplorer', () => {
     before(() => {
+      cy.flush()
       cy.signin()
       cy.get('@org').then(({id}: Organization) => {
         cy.createMapVariable(id)
@@ -108,6 +110,7 @@ describe('Editor+LSP communication', () => {
 
   describe('in QX FluxBuilder', () => {
     before(() => {
+      cy.flush()
       cy.setFeatureFlags({
         newDataExplorer: true,
       })
