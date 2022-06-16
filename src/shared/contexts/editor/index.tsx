@@ -150,9 +150,10 @@ export const EditorProvider: FC = ({children}) => {
           ? getFluxExample(rawFn as FluxFunction)
           : (rawFn as FluxFunction)
 
-      if (isFlagEnabled('injectionViaLsp')) {
-        return injectViaLsp(ExecuteCommand.InjectFunction, {data: fn})
-      }
+      // TODO: once LSP supports injectFunction, then also turn on the cypress test.
+      // if (isFlagEnabled('injectionViaLsp')) {
+      //   return injectViaLsp(ExecuteCommand.InjectFunction, {data: fn})
+      // }
 
       const text = isPipeTransformation(fn)
         ? `  |> ${fn.example.trimRight()}`
